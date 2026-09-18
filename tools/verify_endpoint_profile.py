@@ -52,4 +52,4 @@ if errors:
 
 print("Endpoint profile validation PASS")
 print(" endpoint=1 profile=0x0104 device=0x010D server=8 client=2")
-print(" Basic identity generated; OTA tuple still unresolved; deployment=false")
+print(" Basic identity generated; live outer OTA tuple resolved; deployment=false")
