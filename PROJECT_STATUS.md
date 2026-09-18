@@ -8,7 +8,7 @@ Updated: 2026-09-18
 
 The engineering tree now has a privacy-sanitized public-release path, cross-platform quality gate, public-hygiene validator, and machine-readable flashability gate. Repository, router policy, safety gates, CI validation and stock reliability baseline are established. No installed bulb has been modified. **Bulb disassembly is a hard project constraint: do not use teardown/SWD/JTAG as a planned recovery path.**
 
-The live OTA tuple is now captured and corroborated. The active blocker is reconciling that measured OEM identity with the generic Tuya reference before any deployable binary is considered.
+The live OTA tuple is captured and corroborated, and the frozen D0 artifact now has an independently verified flash-layout proof. The active blockers are production bootloader acceptance/recovery policy and exact installed platform/storage compatibility; the generic Tuya OTA identity remains reference-only.
 
 ## Live installed targets
 
@@ -63,7 +63,7 @@ A Zigbee2MQTT manual OTA **check** does not initiate firmware installation. The 
 
 The OTA cluster does not guarantee acceptance of arbitrary custom bytes. Silicon Labs Gecko Bootloader can optionally require signed/encrypted GBL files and can enforce rollback protection using the **internal GBL Application Properties version**. That version is distinct from the outer Zigbee OTA file version. The exact Tuya production signing, encryption, rollback and acceptance policy remains unresolved.
 
-A software-only structural container proof now exists: the deterministic endpoint-v0 application was wrapped as an unsigned/unencrypted GBL3 and then as Zigbee OTA `0x100B/0x020C/0x10003608`. Commander and the repo parsers agree on the container. The embedded GBL currently reports Application Properties version `1`, proving the outer OTA version cannot safely stand in for the bootloader-visible application version. No exact stock `_TZ3210_mja6r5ix` GBL/ApplicationData version or rollback image has been verified, so rollback remains **UNRESOLVED** and the structural OTA is explicitly non-deployable.
+The frozen D0 diagnostic container is now independently verified: OTA `0x100B/0x020C/0x10003608`, unsigned/unencrypted GBL3 Application Properties version `1`, and exactly two ERASEPROG ranges `0x4000..0x4234` and `0x4238..0x4E548`. The highest erased page ends at `0x50000`, below even the conservative 768-KiB envelope, with no bootloader or SE-upgrade payload. This proves the candidate's flash-write layout, not stock bootloader acceptance. No exact stock `_TZ3210_mja6r5ix` internal application version or rollback image has been verified, so rollback/acceptance remains **UNRESOLVED** and the D0 OTA is still non-deployable.
 
 ## Development baseline
 
@@ -102,6 +102,8 @@ This is **structural build evidence only**. The exact installed PCB/flash-densit
 - CI validators for router policy, live target safety and structural build evidence.
 - `firmware/board_profiles/tuya_zsu_ts0505b_reference.json` - machine-checked Tuya reference PWM mapping, explicitly non-deployable;
 - `tools/quality_gate.py` plus public hygiene/flashability validators - one-command source-quality gate and explicit deployment blocker ledger;
+- `firmware/canary_d0_manifest.json` + `tools/preflight_d0_candidate.py` - frozen D0 identity/ranges and byte-for-byte pre-staging gate;
+- `evidence/d0-flash-layout-verification-2026-09-18.md` - independent ERASEPROG/range/CRC verification record;
 - `docs/FLASHABILITY.md`, `docs/DIAGNOSTIC_CANARY.md`, `docs/PUBLIC_RELEASE.md` - canary-ready contract, diagnostic-first candidate design and fresh-history public-release model;
 - `evidence/public-research-2026-09-18.md` - updated Tuya/exact-family/Silicon Labs compatibility research.
 
@@ -109,7 +111,7 @@ No tooling is permitted to publish an OTA update request or flash a device.
 
 ## Current live dependency
 
-Live OTA identity capture is complete for target-a and independently corroborated by target-b. The Silicon Labs MG21 router-v0, board-neutral light-state layer, exact endpoint/fingerprint profile, and outer Zigbee container format are now structurally build-proven and reproducible. The remaining deployment blockers are the **physical** RGB+CCT board/output contract, exact installed PCB/flash geometry, stock internal GBL Application Properties version, bootloader rollback/signature/encryption policy, `0x100B/0x020C` OEM acceptance semantics, Node Descriptor manufacturer-code provenance, and a no-disassembly rollback/reject-safe classification.
+Live OTA identity capture is complete for target-a and independently corroborated by target-b. The Silicon Labs MG21 router-v0, board-neutral light-state layer, exact endpoint/fingerprint profile, D0 container identity, and D0 flash-write envelope are now structurally proven and reproducible. For the dark diagnostic canary, the remaining safety blockers are exact installed platform/storage compatibility, stock internal GBL Application Properties version, bootloader rollback/signature/encryption acceptance policy, and a no-disassembly rollback/reject-safe classification. The physical RGB+CCT output contract remains a blocker for a lighting-capable release, but D0 deliberately keeps physical output inert.
 
 The temporary Zigbee2MQTT OTA-probe converter has been removed, persisted logging is back to `info`, and the production add-on restarted cleanly after the probe.
 
@@ -123,5 +125,5 @@ The temporary Zigbee2MQTT OTA-probe converter has been removed, persisted loggin
 6. Continue exact OEM/stock image and `0x100B/0x020C` bootloader research, including rollback/signature/encryption policy; acquire TuyaOS ZSU Lighting PDK/framework if available.
 7. Parse any trustworthy UG/GBL candidate for security flags, program ranges and OTA identity. QIO remains forbidden for deployment.
 8. Keep deterministic source-to-artifact hashes and `deployment_ready=false` until binary compatibility, bootloader acceptance and rollback/reject-safe gates are resolved.
-9. Produce the one-device canary authorization package only after all pre-F2 gates pass; target-c remains excluded as first canary.
-10. Stop at the first actual Zigbee2MQTT OTA update request and require explicit user authorization.
+9. Keep the frozen D0 manifest and `tools/preflight_d0_candidate.py` as the byte-for-byte staging authority; target-c remains excluded as first canary.
+10. Resolve the remaining diagnostic-canary bootloader/recovery gates, select target-a or target-b from fresh health metrics, and stop immediately before the first actual Zigbee2MQTT OTA update request for explicit user authorization.

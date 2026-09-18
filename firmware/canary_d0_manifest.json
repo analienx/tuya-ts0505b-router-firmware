@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "candidate": "d0.1-noled",
+  "purpose": "first dark diagnostic canary; not authorization to deploy",
+  "deployment_ready": false,
+  "artifact": {
+    "ota_filename": "hallbulb-d0.1-noled.ota",
+    "ota_size": 304602,
+    "ota_sha256": "55d976078d573aa4dd8833d8af0f000aacbdbef9850bb1e65e1ffe8c4816c549",
+    "gbl_size": 304540,
+    "gbl_sha256": "eb7332f0576698f4e012e01e8a62e618e8be22174a9c76a482da9c162645b26b",
+    "app_size": 304456,
+    "app_sha256": "a5a0e1d49ca5224894059b999e35b5fa3e0c6f34ac657f72d8787117a7acf0d7"
+  },
+  "ota_identity": {
+    "manufacturer_code": 4107,
+    "image_type": 524,
+    "file_version": 268449288,
+    "stack_version": 2,
+    "header_string": "TS0505B D0 NOLED"
+  },
+  "gbl": {
+    "version_hex": "0x03000000",
+    "application_version": 1,
+    "signed": false,
+    "encrypted": false,
+    "bootloader_upgrade_payload": false,
+    "se_upgrade_payload": false,
+    "tag_sequence": ["header", "application_info", "erase_program_data", "erase_program_data", "end"]
+  },
+  "program_ranges": [
+    {"start_hex": "0x00004000", "end_exclusive_hex": "0x00004234", "length": 564},
+    {"start_hex": "0x00004238", "end_exclusive_hex": "0x0004E548", "length": 303888}
+  ],
+  "erase_envelope": {
+    "first_application_address_hex": "0x00004000",
+    "highest_erased_page_end_hex": "0x00050000",
+    "conservative_768k_flash_end_hex": "0x000C0000",
+    "reference_nvm3_begin_hex": "0x000F6000",
+    "reference_application_flash_end_hex": "0x000FE000"
+  },
+  "verification": {
+    "status": "PASS_FLASH_LAYOUT_ONLY",
+    "verified_on": "2026-09-18",
+    "commander_version": "1v24p3b1989",
+    "independent_pi_goal": "dee28956-2208-48bb-8eaa-a5b1545a5629",
+    "crc_residue_hex": "0xDEBB20E3"
+  },
+  "remaining_stop_conditions": [
+    "stock bootloader signature/encryption acceptance policy unresolved",
+    "stock rollback-protection/internal application-version policy unresolved",
+    "no verified stock rollback image or equivalent reject-safe recovery path",
+    "exact installed flash/NVM/storage contract not independently read from the production bulb",
+    "explicit user authorization required immediately before the one-device OTA mutation"
+  ]
+}

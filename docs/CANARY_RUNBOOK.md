@@ -4,7 +4,7 @@ This runbook is intentionally split at the first persistent mutation boundary. E
 
 ## Canary selection
 
-Do not hard-code target-a as the eventual canary merely because it is the first device queried. Select the least critical bulb after fresh production metrics.
+Do not hard-code target-a as the eventual canary merely because it is the first device queried. Select between target-a and target-b only after fresh production metrics. target-c is explicitly ineligible as the first canary because its live OTA tuple was inferred rather than independently captured.
 
 Installed candidates:
 
@@ -98,6 +98,14 @@ Review:
 
 The candidate must advance the live OTA file version according to the bootloader/client's comparison semantics. Never fake an incompatible manufacturer/image type just to force a transfer.
 
+For the frozen D0 diagnostic candidate, run the stronger byte-for-byte gate against the actual local artifact:
+
+```sh
+python tools/preflight_d0_candidate.py <path-to-hallbulb-d0.1-noled.ota>
+```
+
+Before authorization this must report `D0 artifact preflight PASS` and `Mutation gate: CLOSED`. Running the same command with `--require-authorized` must fail until the deployment and authorization gates are deliberately opened.
+
 ## E. Pre-F2 candidate checklist
 
 Before requesting permission for the first OTA update, all of these must be true or explicitly risk-classified:
@@ -130,9 +138,10 @@ The actual Zigbee2MQTT OTA update request is a persistent production-device muta
 2. set the manifest authorization field only for the approved canary operation;
 3. re-run all validators and artifact inspection;
 4. capture fresh bulb reachability/LQI/stock version;
-5. verify the OTA index points to the exact candidate SHA-256;
-6. issue exactly one canary update request;
-7. observe transfer/verification/reboot continuously in the current session.
+5. run `python tools/preflight_d0_candidate.py <candidate> --require-authorized` and require a zero exit status;
+6. verify the OTA index/provider entry is restricted to the approved canary path and resolves to the exact frozen SHA-256;
+7. issue exactly one canary update request;
+8. observe transfer/verification/reboot continuously in the current session.
 
 Do not retry blindly on failure and do not switch to another bulb as a diagnostic shortcut.
 

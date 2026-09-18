@@ -14,7 +14,7 @@ TAG_NAMES = {
     0x5EA617EB: "se_upgrade",
     0xF50909F5: "bootloader",
     0xFE0101FE: "program_data",
-    0xFD0303FD: "program_data_lzma_legacy",
+    0xFD0303FD: "erase_program_data",
     0xFD0505FD: "program_data_lz4",
     0xFD0707FD: "program_data_lzma",
     0xF80A0AF8: "delta",
@@ -82,9 +82,17 @@ def parse_gbl(blob: bytes, offset: int = 0) -> dict:
                 "flash_start_address": address,
                 "flash_start_address_hex": f"0x{address:08X}",
                 "encoded_data_length": length - 4,
+                "erase_before_program": tag_id == 0xFD0303FD,
+                "encoding": {
+                    0xFE0101FE: "plain",
+                    0xFD0303FD: "plain",
+                    0xFD0505FD: "lz4",
+                    0xFD0707FD: "lzma",
+                }[tag_id],
             }
-            if tag_id == 0xFE0101FE:
+            if tag_id in {0xFE0101FE, 0xFD0303FD}:
                 end = address + length - 4
+                item["flash_data_length"] = length - 4
                 item["flash_end_address_exclusive"] = end
                 item["flash_end_address_exclusive_hex"] = f"0x{end:08X}"
             program_ranges.append(item)
@@ -104,6 +112,8 @@ def parse_gbl(blob: bytes, offset: int = 0) -> dict:
         "has_signature_tag": any(tag["tag_id"] == 0xF70A0AF7 for tag in tags),
         "has_certificate_tag": any(tag["tag_id"] == 0xF30B0BF3 for tag in tags),
         "has_encrypted_data": any(tag["tag_id"] == 0xF90707F9 for tag in tags),
+        "has_bootloader_upgrade": any(tag["tag_id"] == 0xF50909F5 for tag in tags),
+        "has_se_upgrade": any(tag["tag_id"] == 0x5EA617EB for tag in tags),
         "has_end_tag": any(tag["tag_id"] == 0xFC0404FC for tag in tags),
         "application_info": app_info,
         "program_ranges": program_ranges,

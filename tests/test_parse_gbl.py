@@ -28,6 +28,19 @@ class ParseGblTests(unittest.TestCase):
         self.assertEqual(parsed["program_ranges"][0]["flash_start_address"], 0x4000)
         self.assertEqual(parsed["program_ranges"][0]["flash_end_address_exclusive"], 0x4003)
 
+    def test_eraseprog_is_plain_program_data_with_exact_range(self):
+        gbl = self.make_gbl()
+        erase_payload = struct.pack("<I", 0x00004238) + b"ERASEPROG"
+        marker = struct.pack("<II", 0xFE0101FE, 7) + struct.pack("<I", 0x00004000) + b"APP"
+        replacement = struct.pack("<II", 0xFD0303FD, len(erase_payload)) + erase_payload
+        parsed = parse_gbl(gbl.replace(marker, replacement))
+        item = parsed["program_ranges"][0]
+        self.assertEqual(item["tag"], "erase_program_data")
+        self.assertEqual(item["encoding"], "plain")
+        self.assertTrue(item["erase_before_program"])
+        self.assertEqual(item["flash_start_address"], 0x4238)
+        self.assertEqual(item["flash_end_address_exclusive"], 0x4238 + len(b"ERASEPROG"))
+
     def test_signed_flag_and_signature_tag(self):
         parsed = parse_gbl(self.make_gbl(gbl_type=0x100, include_signature=True))
         self.assertTrue(parsed["signed_flag"])

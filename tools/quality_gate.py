@@ -13,6 +13,7 @@ STEPS = [
     [sys.executable, "tools/verify_endpoint_profile.py"],
     [sys.executable, "tools/verify_silabs_router_build_manifest.py"],
     [sys.executable, "tools/verify_reference_board_profile.py"],
+    [sys.executable, "tools/verify_canary_d0_manifest.py"],
     [sys.executable, "tools/verify_public_hygiene.py"],
     [sys.executable, "-m", "compileall", "-q", "tools", "tests"],
     [sys.executable, "-m", "unittest", "discover", "-s", "tests", "-v"],
