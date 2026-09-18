@@ -10,9 +10,17 @@ Current zigbee-herdsman normally responds to a successful OTA `UpgradeEndRequest
 
 The Zigbee OTA protocol also defines `upgradeTime=0xFFFFFFFF` as an indefinite wait for a later upgrade command. Silicon Labs' OTA client architecture separates download/verification from the later bootload callback, so this gives us a materially safer diagnostic step.
 
+## Preferred Zigbee2MQTT integration
+
+For production Zigbee2MQTT, prefer `integrations/zigbee2mqtt/d0_validation_hold_extension.mjs` over modifying the packaged zigbee-herdsman source. Zigbee2MQTT external extensions are loaded from its data path and can be added/removed dynamically when `advanced.enable_external_js` is enabled.
+
+The extension wraps the live herdsman Endpoint `commandResponse()` method only while active. It modifies only the frozen D0 Upgrade End response, publishes a retained `bridge/d0_validation_hold` status, fails closed if upstream timing is not the expected `currentTime=0 / upgradeTime=1`, and restores the original method on stop.
+
+The source patcher below remains useful as an independent reference implementation and fallback compatibility check.
+
 ## Frozen scope
 
-The repository patcher changes behavior only when all three values match the frozen D0 candidate:
+Both the external extension and repository patcher change behavior only when all three values match the frozen D0 candidate:
 
 - manufacturer code `0x100B`;
 - image type `0x020C`;
@@ -43,7 +51,7 @@ Verified on 2026-09-18 against both the production dependency and current upstre
 - `pnpm run build` (`tsc`) passes on both;
 - Biome check on `src/controller/model/device.ts` passes with no fixes on both.
 
-The live Zigbee2MQTT 2.14.0 bridge reports zigbee-herdsman 10.9.1, so the production dependency is covered by this proof. These hashes identify the upstream source file shape, not the packaged Home Assistant add-on filesystem.
+The live Zigbee2MQTT 2.14.0 bridge reports zigbee-herdsman 10.9.1, so the production dependency is covered by this proof. Zigbee2MQTT tag `2.14.0`, commit `62b02e2aa1997c574223b80c196677b63a25f4a7`, also exposes the external-extension constructor contract used here (including `zigbee`, `mqtt`, `settings`, and `logger`) and the `zigbee.zhController` getter required by the runtime hook. These hashes identify the upstream source file shape, not the packaged Home Assistant add-on filesystem.
 
 ## Authorized validation-hold sequence
 
@@ -52,11 +60,12 @@ Immediately before a live validation-hold experiment:
 1. capture fresh target-a/target-b reachability, LQI, stock version and OTA tuple;
 2. select one canary only; target-c is not eligible for the first canary;
 3. re-run `tools/preflight_d0_candidate.py` against the exact OTA bytes;
-4. prove the production zigbee-herdsman source/bundle contains the D0 hold behavior for the frozen tuple;
-5. serve the OTA only through the explicitly targeted one-device request path;
-6. transfer and wait for the client's `UpgradeEndRequest` result;
-7. require success before concluding that the stock client/bootloader accepted verification;
-8. return `upgradeTime=0xFFFFFFFF` and confirm the stock application remains running;
-9. remove the OTA source/provider and record the result.
+4. load `d0_validation_hold_extension.mjs` through Zigbee2MQTT's external-extension mechanism and verify its exact bytes plus successful load before offering any image;
+5. confirm the extension is active for `0x100B/0x020C/0x10003608` and automatic OTA checks remain disabled;
+6. serve the OTA only through the explicitly targeted one-device request path;
+7. transfer and wait for the client's `UpgradeEndRequest` result;
+8. require success before concluding that the stock client/bootloader accepted verification;
+9. return `upgradeTime=0xFFFFFFFF` and confirm the stock application remains running;
+10. remove the OTA source/provider and record the result.
 
 Do not send a later upgrade/activation command without a separate explicit authorization at that mutation boundary.

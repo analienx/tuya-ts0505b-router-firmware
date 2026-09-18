@@ -139,11 +139,12 @@ The first authorized live experiment should use the D0 validation-hold mode in `
 3. re-run all validators and artifact inspection;
 4. capture fresh bulb reachability/LQI/stock version;
 5. run `python tools/preflight_d0_candidate.py <candidate> --require-authorized` and require a zero exit status;
-6. verify the OTA index/provider entry is restricted to the approved canary path and resolves to the exact frozen SHA-256;
-7. issue exactly one canary update request using the validation-hold path;
-8. observe transfer and client verification continuously in the current session;
-9. require `UpgradeEndRequest=SUCCESS`, respond with `upgradeTime=0xFFFFFFFF`, and confirm the stock application remains running;
-10. remove the candidate from the one-device OTA source/provider after evidence capture.
+6. load and verify `integrations/zigbee2mqtt/d0_validation_hold_extension.mjs` through Zigbee2MQTT's supported external-extension mechanism; automatic OTA checks must remain disabled;
+7. verify the one-device OTA source resolves to the exact frozen SHA-256 and no global override/index exposes D0 to other devices;
+8. issue exactly one canary update request using the validation-hold path;
+9. observe transfer and client verification continuously in the current session;
+10. require `UpgradeEndRequest=SUCCESS`, respond with `upgradeTime=0xFFFFFFFF`, and confirm the stock application remains running;
+11. remove the candidate from the one-device OTA source/provider after evidence capture.
 
 A validation-hold success is evidence of download/verification acceptance, **not authorization to activate the custom application**. Do not retry blindly on failure and do not switch to another bulb as a diagnostic shortcut.
 
