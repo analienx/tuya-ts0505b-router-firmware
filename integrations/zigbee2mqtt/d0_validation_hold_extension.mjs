@@ -103,7 +103,7 @@ export default class D0ValidationHold {
         });
 
         if (typeof this.mqtt?.publish === "function") {
-            await this.mqtt.publish(STATUS_TOPIC, payload, {retain: true});
+            await this.mqtt.publish(STATUS_TOPIC, payload, {clientOptions: {retain: true}});
         }
     }
 }
