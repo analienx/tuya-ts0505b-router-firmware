@@ -132,7 +132,7 @@ Before requesting permission for the first OTA update, all of these must be true
 
 **STOP HERE until explicit user authorization.**
 
-The actual Zigbee2MQTT OTA update request is a persistent production-device mutation. Immediately before it:
+The first authorized live experiment should use the D0 validation-hold mode in `docs/D0_VALIDATION_HOLD.md`, not the normal immediate-activation path. Download/verification still writes OTA staging/storage and therefore remains a persistent production-device mutation. Immediately before it:
 
 1. record direct user authorization in issue #1;
 2. set the manifest authorization field only for the approved canary operation;
@@ -140,10 +140,12 @@ The actual Zigbee2MQTT OTA update request is a persistent production-device muta
 4. capture fresh bulb reachability/LQI/stock version;
 5. run `python tools/preflight_d0_candidate.py <candidate> --require-authorized` and require a zero exit status;
 6. verify the OTA index/provider entry is restricted to the approved canary path and resolves to the exact frozen SHA-256;
-7. issue exactly one canary update request;
-8. observe transfer/verification/reboot continuously in the current session.
+7. issue exactly one canary update request using the validation-hold path;
+8. observe transfer and client verification continuously in the current session;
+9. require `UpgradeEndRequest=SUCCESS`, respond with `upgradeTime=0xFFFFFFFF`, and confirm the stock application remains running;
+10. remove the candidate from the one-device OTA source/provider after evidence capture.
 
-Do not retry blindly on failure and do not switch to another bulb as a diagnostic shortcut.
+A validation-hold success is evidence of download/verification acceptance, **not authorization to activate the custom application**. Do not retry blindly on failure and do not switch to another bulb as a diagnostic shortcut.
 
 ## G. Immediate postflight
 
