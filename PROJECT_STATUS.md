@@ -103,7 +103,9 @@ This is **structural build evidence only**. The exact installed PCB/flash-densit
 - `firmware/board_profiles/tuya_zsu_ts0505b_reference.json` - machine-checked Tuya reference PWM mapping, explicitly non-deployable;
 - `tools/quality_gate.py` plus public hygiene/flashability validators - one-command source-quality gate and explicit deployment blocker ledger;
 - `firmware/canary_d0_manifest.json` + `tools/preflight_d0_candidate.py` - frozen D0 identity/ranges and byte-for-byte pre-staging gate;
-- `tools/patch_zigbee_herdsman_d0_hold.py` + `docs/D0_VALIDATION_HOLD.md` - tuple-scoped validation-only Upgrade End hold, verified against zigbee-herdsman 10.9.4;
+- `tools/patch_zigbee_herdsman_d0_hold.py` + `docs/D0_VALIDATION_HOLD.md` - tuple-scoped validation-only Upgrade End hold, verified against production herdsman 10.9.1 and upstream 10.9.4;
+- `integrations/zigbee2mqtt/d0_validation_hold_extension.mjs` - reversible production hold guard using Z2M's supported external-extension API;
+- `tools/build_z2m_d0_request.py` - offline exact-hash one-device request-package generator; never publishes or authorizes mutation;
 - `evidence/d0-flash-layout-verification-2026-09-18.md` - independent ERASEPROG/range/CRC verification record;
 - `docs/FLASHABILITY.md`, `docs/DIAGNOSTIC_CANARY.md`, `docs/PUBLIC_RELEASE.md` - canary-ready contract, diagnostic-first candidate design and fresh-history public-release model;
 - `evidence/public-research-2026-09-18.md` - updated Tuya/exact-family/Silicon Labs compatibility research.
@@ -127,4 +129,4 @@ The temporary Zigbee2MQTT OTA-probe converter has been removed, persisted loggin
 7. Parse any trustworthy UG/GBL candidate for security flags, program ranges and OTA identity. QIO remains forbidden for deployment.
 8. Keep deterministic source-to-artifact hashes and `deployment_ready=false` until binary compatibility, bootloader acceptance and rollback/reject-safe gates are resolved.
 9. Keep the frozen D0 manifest and `tools/preflight_d0_candidate.py` as the byte-for-byte staging authority; target-c remains excluded as first canary.
-10. Use `docs/D0_VALIDATION_HOLD.md` for the first authorized live experiment: select target-a or target-b from fresh health metrics, prove the production herdsman hold patch, and stop immediately before the first OTA-storage mutation for explicit user authorization. A successful held transfer is verification-acceptance evidence only; custom-application activation remains a separate authorization boundary.
+10. Use `docs/D0_VALIDATION_HOLD.md` for the first authorized live experiment. Fresh 2026-09-18 production logs currently favor target-b over target-a for the first canary because target-b shows fewer genuine timeout/error events while remaining online on the same stock build; re-check immediately before mutation. Prefer the reversible Zigbee2MQTT external-extension hold, and stop immediately before the first OTA-storage mutation for explicit user authorization. A successful held transfer is verification-acceptance evidence only; custom-application activation remains a separate authorization boundary.
