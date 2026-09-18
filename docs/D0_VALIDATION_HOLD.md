@@ -62,10 +62,11 @@ Immediately before a live validation-hold experiment:
 3. re-run `tools/preflight_d0_candidate.py` against the exact OTA bytes;
 4. load `d0_validation_hold_extension.mjs` through Zigbee2MQTT's external-extension mechanism and verify its exact bytes plus successful load before offering any image;
 5. confirm the extension is active for `0x100B/0x020C/0x10003608` and automatic OTA checks remain disabled;
-6. serve the OTA only through the explicitly targeted one-device request path;
-7. transfer and wait for the client's `UpgradeEndRequest` result;
-8. require success before concluding that the stock client/bootloader accepted verification;
-9. return `upgradeTime=0xFFFFFFFF` and confirm the stock application remains running;
-10. remove the OTA source/provider and record the result.
+6. build the prepared-only one-device request with `python tools/build_z2m_d0_request.py <candidate.ota> --id <canary> --output <package.json>`; verify the package says `mutation_authorized=false` and uses the exact frozen SHA-256;
+7. only after explicit authorization, publish the nested payload from that package to its single `zigbee2mqtt/bridge/request/device/ota_update/update` topic; Z2M 2.14.0 accepts the full OTA bytes through the request's `hex.data` field, so no global override index or web server is required;
+8. transfer and wait for the client's `UpgradeEndRequest` result;
+9. require success before concluding that the stock client/bootloader accepted verification;
+10. return `upgradeTime=0xFFFFFFFF` and confirm the stock application remains running;
+11. remove any generated one-device firmware staging file/source after evidence capture and record the result.
 
 Do not send a later upgrade/activation command without a separate explicit authorization at that mutation boundary.

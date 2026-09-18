@@ -103,7 +103,9 @@ This is **structural build evidence only**. The exact installed PCB/flash-densit
 - `firmware/board_profiles/tuya_zsu_ts0505b_reference.json` - machine-checked Tuya reference PWM mapping, explicitly non-deployable;
 - `tools/quality_gate.py` plus public hygiene/flashability validators - one-command source-quality gate and explicit deployment blocker ledger;
 - `firmware/canary_d0_manifest.json` + `tools/preflight_d0_candidate.py` - frozen D0 identity/ranges and byte-for-byte pre-staging gate;
-- `tools/patch_zigbee_herdsman_d0_hold.py` + `docs/D0_VALIDATION_HOLD.md` - tuple-scoped validation-only Upgrade End hold, verified against zigbee-herdsman 10.9.4;
+- `tools/patch_zigbee_herdsman_d0_hold.py` + `docs/D0_VALIDATION_HOLD.md` - tuple-scoped validation-only Upgrade End hold, verified against production herdsman 10.9.1 and upstream 10.9.4;
+- `integrations/zigbee2mqtt/d0_validation_hold_extension.mjs` - reversible production hold guard using Z2M's supported external-extension API;
+- `tools/build_z2m_d0_request.py` - offline exact-hash one-device request-package generator; never publishes or authorizes mutation;
 - `evidence/d0-flash-layout-verification-2026-09-18.md` - independent ERASEPROG/range/CRC verification record;
 - `docs/FLASHABILITY.md`, `docs/DIAGNOSTIC_CANARY.md`, `docs/PUBLIC_RELEASE.md` - canary-ready contract, diagnostic-first candidate design and fresh-history public-release model;
 - `evidence/public-research-2026-09-18.md` - updated Tuya/exact-family/Silicon Labs compatibility research.
