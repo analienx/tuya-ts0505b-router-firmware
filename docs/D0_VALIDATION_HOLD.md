@@ -33,15 +33,17 @@ The patcher fails closed if the upstream activation site is missing, duplicated,
 
 ## Upstream compatibility proof
 
-Verified on 2026-09-18 against zigbee-herdsman `10.9.4`, commit `e9dcfb5c5967fb8b279c92e4fd0afe3173c06124`:
+Verified on 2026-09-18 against both the production dependency and current upstream:
 
-- exactly one eligible `upgradeEndResponse` activation site found;
-- unpatched source SHA-256 (LF checkout): `c9e676dbebb9fb9baf38efdfb5357ea13b58676fc528549eccfb97d887c7ce2f`;
-- generated patched source SHA-256: `dd763b290f780d1212343a303a794da348472b305fd711b4e07d724411ff0a98`;
-- `pnpm run build` (`tsc`) passes;
-- Biome check on `src/controller/model/device.ts` passes with no fixes.
+- zigbee-herdsman `10.9.1`, tag `v10.9.1`, commit `0968f979d558874b17396c96b66382d4236bbdcd`;
+- zigbee-herdsman `10.9.4`, commit `e9dcfb5c5967fb8b279c92e4fd0afe3173c06124`;
+- both versions expose exactly one eligible `upgradeEndResponse` activation site;
+- both have the same unpatched source SHA-256 (LF checkout): `c9e676dbebb9fb9baf38efdfb5357ea13b58676fc528549eccfb97d887c7ce2f`;
+- both produce the same patched source SHA-256: `dd763b290f780d1212343a303a794da348472b305fd711b4e07d724411ff0a98`;
+- `pnpm run build` (`tsc`) passes on both;
+- Biome check on `src/controller/model/device.ts` passes with no fixes on both.
 
-These hashes identify the upstream source file shape, not a production Home Assistant add-on build.
+The live Zigbee2MQTT 2.14.0 bridge reports zigbee-herdsman 10.9.1, so the production dependency is covered by this proof. These hashes identify the upstream source file shape, not the packaged Home Assistant add-on filesystem.
 
 ## Authorized validation-hold sequence
 
