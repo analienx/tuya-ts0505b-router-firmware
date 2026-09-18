@@ -1,0 +1,109 @@
+{
+  "schema_version": 3,
+  "project": "tuya-ts0505b-bulb",
+  "deployment_ready": false,
+  "constraints": {
+    "disassembly_allowed": false,
+    "swd_jtag_recovery_allowed": false,
+    "device_mutation_authorized": false,
+    "deployment_transport": "zigbee_ota_only"
+  },
+  "installed_family": {
+    "model_id": "TS0505B",
+    "manufacturer_name": "_TZ3210_mja6r5ix",
+    "ha_model": "TS0505B_1_1",
+    "stock_sw_build_id": "z.1.0",
+    "stock_app_version": 112,
+    "stock_stack_version": 2,
+    "stock_hardware_version": 0
+  },
+  "reference_platform": {
+    "evidence_level": "authoritative_family_reference_live_identity_mismatch",
+    "module": "ZSU",
+    "soc_primary": "EFR32MG21A020F1024IM32",
+    "soc_documented_alternative": "EFR32MG21A020F768IM32",
+    "flash_kib_primary": 1024,
+    "ram_kib_primary": 96,
+    "tuya_role": "router",
+    "ota_manufacturer_code": 4098,
+    "ota_manufacturer_code_hex": "0x1002",
+    "ota_image_type": 5634,
+    "ota_image_type_hex": "0x1602",
+    "reference_tx_power_dbm": 11,
+    "reference_pwm": {
+      "red": "PA3",
+      "green": "PD2",
+      "blue": "PC5",
+      "cold_white": "PA4",
+      "warm_white": "PA0"
+    }
+  },
+  "live_ota": {
+    "device": "target-a",
+    "checked": true,
+    "manufacturer_code": 4107,
+    "manufacturer_code_hex": "0x100B",
+    "image_type": 524,
+    "image_type_hex": "0x020C",
+    "file_version": 268449287,
+    "file_version_hex": "0x10003607",
+    "field_control": 0,
+    "query_status": "success_no_update",
+    "matches_reference_identity": false,
+    "evidence_source": "evidence/live-ota-probe-2026-09-10.md"
+  },
+  "live_ota_corroboration": [
+    {
+      "device": "target-b",
+      "checked": true,
+      "manufacturer_code": 4107,
+      "image_type": 524,
+      "file_version": 268449287,
+      "field_control": 0,
+      "query_status": "success_no_update"
+    },
+    {
+      "device": "target-c",
+      "checked": false,
+      "manufacturer_code": 4107,
+      "image_type": 524,
+      "file_version": 268449287,
+      "field_control": 0,
+      "query_status": "inferred_same_population_after_ota_timeout",
+      "identity_evidence": "inferred_from_identical_stock_fingerprint_and_two_matching_peer_devices",
+      "targeting_population_member": true
+    }
+  ],
+  "compatibility": {
+    "live_ota_identity_authoritative_for_targeting": true,
+    "reference_binary_compatibility": "UNRESOLVED_IDENTITY_MISMATCH",
+    "generic_reference_identity_must_not_target_installed_population": true
+  },
+  "rollback": {
+    "status": "UNRESOLVED",
+    "stock_image_sha256": null,
+    "stock_image_source": null
+  },
+  "candidate": {
+    "source_sha": null,
+    "app_sha256": null,
+    "ug_gbl_sha256": null,
+    "ota_sha256": null,
+    "file_version": null,
+    "ota_manufacturer_code": null,
+    "ota_image_type": null,
+    "gbl_application_version": null,
+    "gbl_signed": null,
+    "gbl_encrypted": null
+  },
+  "bootloader_contract": {
+    "stock_application_properties_version": null,
+    "stock_application_properties_version_status": "UNRESOLVED",
+    "rollback_protection_policy": "UNRESOLVED",
+    "upgrade_signature_policy": "UNRESOLVED",
+    "upgrade_encryption_policy": "UNRESOLVED",
+    "candidate_acceptance_status": "UNRESOLVED",
+    "outer_ota_file_version_is_not_internal_app_version": true,
+    "evidence_source": "evidence/structural-container-v0-2026-09-11.md"
+  }
+}

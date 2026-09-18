@@ -1,0 +1,18 @@
+# Python tooling artifacts
+__pycache__/
+*.py[cod]
+
+# Local build/test scratch
+*.tmp
+*.log
+
+# Generated firmware/build artifacts are never committed to the public source tree
+*.ota
+*.gbl
+*.bin
+*.hex
+*.s37
+*.elf
+build/
+out/
+dist/

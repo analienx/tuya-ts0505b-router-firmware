@@ -1,0 +1,40 @@
+schema_version: 1
+project_id: tuya-ts0505b-bulb
+repo: analienx/tuya-zigbee-bulb
+lifecycle: active
+canonical_skill:
+  repo: analienx/config
+  path: skills/supervisor-executor/SKILL.md
+registry:
+  repo: analienx/config
+  path: supervisor/projects.yaml
+context:
+  root_agents: AGENTS.md
+  status: PROJECT_STATUS.md
+  device_ledger: devices/ts0505b-mja6r5ix/README.md
+  router_policy: docs/ROUTER_POLICY.md
+  bringup: docs/BRINGUP.md
+  execution_plan: docs/EXECUTION_PLAN.md
+  canary_runbook: docs/CANARY_RUNBOOK.md
+  firmware_fast_path:
+    repo: analienx/config
+    ref: main
+    path: skills/supervisor-executor/FIRMWARE_FAST_PATH.md
+control:
+  mode: task_issue
+  primary_issue: 1
+user_shorthand:
+  ".": supervise_latest
+executor:
+  environment: windows_notebook
+  management_paths:
+    - local_shell
+    - ssh_ha
+    - zigbee2mqtt_mqtt
+    - home_assistant_api
+notes: >-
+  OTA-first/no-disassembly project. Software-only and read-only work continues until
+  the first persistent one-device Zigbee OTA update is the next meaningful step.
+  Do not use teardown, SWD/JTAG or opened-hardware recovery as the project path.
+  The first actual custom OTA update remains an F2 boundary requiring explicit
+  direct-user authorization. Bootloader/partition changes remain prohibited.
