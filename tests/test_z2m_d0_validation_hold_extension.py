@@ -77,9 +77,11 @@ await assert.rejects(
 );
 
 assert.equal(JSON.parse(published[0][1]).active, true);
+assert.deepEqual(published[0][2], {{clientOptions: {{retain: true}}}});
 await hold.stop();
 assert.equal(Object.getPrototypeOf(endpoint).commandResponse, original);
 assert.equal(JSON.parse(published.at(-1)[1]).active, false);
+assert.deepEqual(published.at(-1)[2], {{clientOptions: {{retain: true}}}});
 """
         with tempfile.TemporaryDirectory() as directory:
             harness = Path(directory) / "hold-test.mjs"
